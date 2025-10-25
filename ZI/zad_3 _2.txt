@@ -1,0 +1,83 @@
+
+CREATE TABLE Podróżnik (
+    id_podroznika INTEGER PRIMARY KEY,
+    nazwa_podroznika VARCHAR(50) UNIQUE,
+    email VARCHAR(100) UNIQUE,
+    haslo_hash VARCHAR(256),
+    data_rejestracji DATE
+);
+
+
+CREATE TABLE Podroze (
+    id_podrozy INTEGER PRIMARY KEY,
+    id_uzytkownika INTEGER REFERENCES Podróżnik(id_podroznika),
+    nazwa_podrozy VARCHAR(100),
+    data_start DATE,
+    data_koniec DATE,
+    opis TEXT
+);
+
+
+CREATE TABLE Miejsca (
+    id_miejsca INTEGER PRIMARY KEY,
+    nazwa_miejsca VARCHAR(100),
+    miasto VARCHAR(50),
+    wojewodztwo VARCHAR(50),
+    kraj VARCHAR(50),
+    szerokosc_geograficzna DECIMAL(9, 6), -- Poprawione na numer
+    dlugosc_geograficzna DECIMAL(9, 6) -- Poprawione na numer
+);
+
+CREATE TABLE Kategorie (
+    id_kategorii INTEGER PRIMARY KEY,
+    nazwa_kategorii VARCHAR(100)
+);
+
+
+CREATE TABLE Miejsca_Kategorie (
+    id_miejsca INTEGER REFERENCES Miejsca(id_miejsca),
+    id_kategorii INTEGER REFERENCES Kategorie(id_kategorii),
+    PRIMARY KEY (id_miejsca, id_kategorii)
+);
+
+CREATE TABLE Oceny (
+    id_oceny INTEGER PRIMARY KEY,
+    id_miejsca INTEGER REFERENCES Miejsca(id_miejsca),
+    id_uzytkownika INTEGER REFERENCES Podróżnik(id_podroznika),
+    ocena INTEGER CHECK (ocena BETWEEN 1 AND 5),
+    komentarz TEXT
+);
+
+
+CREATE TABLE Rekomendacje (
+    id_rekomendacji INTEGER PRIMARY KEY,
+    id_miejsca INTEGER REFERENCES Miejsca(id_miejsca),
+    id_oceny INTEGER REFERENCES Oceny(id_oceny),
+    id_uzytkownika INTEGER REFERENCES Podróżnik(id_podroznika),
+    komentarz TEXT,
+    media_url VARCHAR(512),
+    media_typ VARCHAR(50),
+    CONSTRAINT fk_oceny FOREIGN KEY (id_oceny) REFERENCES Oceny(id_oceny) ON DELETE CASCADE
+);
+
+-- Tabela Odwiedziny
+CREATE TABLE Odwiedziny (
+    id_odwiedziny INTEGER PRIMARY KEY,
+    id_uzytkownika INTEGER REFERENCES Podróżnik(id_podroznika), -- Zmiana, id_podrozy na id_uzytkownika
+    id_miejsca INTEGER REFERENCES Miejsca(id_miejsca),
+    data_odwiedzin DATE
+);
+
+-- Tabela Znajomi
+CREATE TABLE Znajomi (
+    id_znajomosci INTEGER PRIMARY KEY,
+    id_uzytkownika1 INTEGER REFERENCES Podróżnik(id_podroznika),
+    id_uzytkownika2 INTEGER REFERENCES Podróżnik(id_podroznika),
+    UNIQUE (id_uzytkownika1, id_uzytkownika2)
+);
+
+CREATE TABLE Ulubione_Miejsca (
+    id_uzytkownika INTEGER REFERENCES Podróżnik(id_podroznika),
+    id_miejsca INTEGER REFERENCES Miejsca(id_miejsca),
+    PRIMARY KEY (id_uzytkownika, id_miejsca)
+);

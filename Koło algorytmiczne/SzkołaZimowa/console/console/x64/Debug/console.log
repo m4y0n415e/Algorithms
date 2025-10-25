@@ -1,0 +1,2 @@
+﻿  console.cpp
+C:\Users\InteXPC\Programming\VS Community console apps\SzkołaZimowa\console\console\console.cpp(1,10): error C1083: Cannot open include file: 'bits/stdc++.h': No such file or directory
